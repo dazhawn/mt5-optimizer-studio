@@ -1,0 +1,29 @@
+# Render blueprint — one web service + a managed Postgres database.
+# Deploy: push this repo to GitHub, then Render → New → Blueprint → pick the repo.
+services:
+  - type: web
+    name: mt5-optimizer-studio
+    runtime: python
+    plan: starter                     # "free" works too (spins down when idle)
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+      - key: DATABASE_URL             # injected from the database below
+        fromDatabase:
+          name: mt5studio-db
+          property: connectionString
+      - key: SECRET_KEY               # signs session cookies
+        generateValue: true
+      - key: SECURE_COOKIES           # HTTPS-only cookies (Render serves HTTPS)
+        value: "true"
+      - key: APP_PASSWORD             # set your login password in the dashboard
+        sync: false
+      - key: MT5_AGENT_TOKEN          # shared secret for the VPS agent (optional)
+        sync: false
+
+databases:
+  - name: mt5studio-db
+    plan: basic-256mb                 # "free" tier expires after 30 days

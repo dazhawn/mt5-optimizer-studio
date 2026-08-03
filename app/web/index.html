@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MT5 Optimizer Studio</title>
+<style>
+  :root {
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --border:#2a3240;
+    --text:#e6edf3; --muted:#8b949e; --accent:#3b82f6; --accent2:#22c55e;
+    --amber:#f59e0b; --red:#ef4444;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:14px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+  header { padding:18px 24px; border-bottom:1px solid var(--border);
+    display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; }
+  header h1 { font-size:18px; margin:0; font-weight:650; }
+  header .run { color:var(--muted); font-size:13px; }
+  header .run b { color:var(--text); font-weight:600; }
+  main { padding:20px 24px; max-width:1200px; }
+  .panel { background:var(--panel); border:1px solid var(--border);
+    border-radius:10px; padding:16px 18px; margin-bottom:18px; }
+  .controls { display:flex; gap:22px; flex-wrap:wrap; align-items:flex-end; }
+  .field { display:flex; flex-direction:column; gap:5px; }
+  .field label { font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+    color:var(--muted); }
+  .field input[type=number] { width:92px; background:var(--panel2);
+    border:1px solid var(--border); color:var(--text); border-radius:7px;
+    padding:7px 9px; font-size:14px; }
+  .field input[type=text], .field select { background:var(--panel2);
+    border:1px solid var(--border); color:var(--text); border-radius:7px;
+    padding:7px 9px; font-size:14px; }
+  .field select { min-width:280px; }
+  .weights { display:flex; gap:14px; flex-wrap:wrap; }
+  .wt { display:flex; flex-direction:column; gap:4px; width:120px; }
+  .wt label { font-size:11px; color:var(--muted); display:flex;
+    justify-content:space-between; }
+  .wt label span { color:var(--text); font-variant-numeric:tabular-nums; }
+  .wt input[type=range] { accent-color:var(--accent); }
+  .check { display:flex; align-items:center; gap:7px; font-size:13px;
+    color:var(--muted); }
+  button { background:var(--accent); color:#fff; border:0; border-radius:8px;
+    padding:9px 18px; font-size:14px; font-weight:600; cursor:pointer; }
+  button:hover { filter:brightness(1.08); }
+  button:disabled { opacity:.5; cursor:default; }
+  .stats { display:flex; gap:26px; margin:4px 0 2px; flex-wrap:wrap; }
+  .stat { display:flex; flex-direction:column; }
+  .stat b { font-size:20px; font-variant-numeric:tabular-nums; }
+  .stat span { font-size:11px; color:var(--muted); text-transform:uppercase;
+    letter-spacing:.04em; }
+  table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+  th,td { text-align:right; padding:8px 10px; border-bottom:1px solid var(--border);
+    white-space:nowrap; }
+  th { color:var(--muted); font-size:11px; text-transform:uppercase;
+    letter-spacing:.04em; font-weight:600; position:sticky; top:0;
+    background:var(--panel); }
+  th:first-child, td:first-child { text-align:left; }
+  tbody tr:hover { background:var(--panel2); }
+  .score-cell { display:flex; align-items:center; gap:8px; justify-content:flex-end; }
+  .bar { height:7px; border-radius:4px; background:linear-gradient(90deg,#2563eb,#22c55e);
+    min-width:4px; }
+  .pass-no { color:var(--muted); }
+  .good { color:var(--accent2); } .warn { color:var(--amber); } .bad { color:var(--red); }
+  .muted { color:var(--muted); }
+  .tablewrap { overflow-x:auto; }
+  .hint { color:var(--muted); font-size:12px; margin-top:10px; }
+  .panel-title { margin:0 0 12px; font-size:14px; font-weight:650; }
+  .refine-out { margin-top:14px; }
+  .refine-out table { margin-top:12px; }
+  .reduction { font-size:15px; }
+  .reduction b { color:var(--accent2); font-size:19px; font-variant-numeric:tabular-nums; }
+  .pill { display:inline-block; background:var(--panel2); border:1px solid var(--border);
+    border-radius:999px; padding:3px 11px; margin:8px 6px 0 0; font-size:12px; }
+  input[type=file] { color:var(--muted); font-size:13px; max-width:240px; }
+  a.dl { display:inline-block; margin-top:14px; background:var(--accent2); color:#04120a;
+    padding:9px 16px; border-radius:8px; text-decoration:none; font-weight:600; }
+  a.dl:hover { filter:brightness(1.08); }
+  .accounts { display:flex; flex-direction:column; gap:8px; }
+  .acct { display:flex; justify-content:space-between; align-items:center;
+    padding:10px 12px; background:var(--panel2); border:1px solid var(--border);
+    border-radius:8px; cursor:pointer; }
+  .acct:hover, .acct.sel { border-color:var(--accent); }
+  .acct .lbl { font-weight:600; }
+  .acct .meta { color:var(--muted); font-size:12px; font-variant-numeric:tabular-nums; }
+  .acct-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+  .linked-line { font-size:12px; margin-top:4px; color:var(--accent2); }
+  .linked-line.none { color:var(--muted); }
+  .linksel { background:var(--panel); border:1px solid var(--border); color:var(--text);
+    border-radius:6px; padding:4px 6px; font-size:12px; max-width:230px; }
+  .acct .kind { font-size:10px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--muted); border:1px solid var(--border); border-radius:4px;
+    padding:1px 6px; margin-right:8px; }
+  .chart-wrap { margin-top:14px; }
+  .empty { color:var(--muted); font-size:13px; }
+  .syncrow { display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-top:10px; }
+  .syncrow input { background:var(--panel2); border:1px solid var(--border);
+    color:var(--text); border-radius:7px; padding:7px 9px; font-size:13px; }
+  details summary { cursor:pointer; }
+</style>
+</head>
+<body>
+<header>
+  <h1>⚙️ MT5 Optimizer Studio</h1>
+  <div class="run" id="runinfo">loading…</div>
+</header>
+<main>
+  <div class="panel">
+    <h2 class="panel-title">Optimization run</h2>
+    <div class="controls">
+      <div class="field">
+        <label>Select a run</label>
+        <select id="runSelect"><option value="">— select a run —</option></select>
+      </div>
+      <span class="muted">or import a results file →</span>
+      <div class="field">
+        <label>MT5 results XML</label>
+        <input type="file" id="runFile" accept=".xml">
+      </div>
+      <div class="field">
+        <label>EA name</label>
+        <input type="text" id="runEa" placeholder="e.g. Archangel X">
+      </div>
+      <div class="field">
+        <label>Symbol</label>
+        <input type="text" id="runSymbol" placeholder="XAGUSD" style="width:110px">
+      </div>
+      <div class="field">
+        <label>TF</label>
+        <input type="text" id="runTf" placeholder="M1" style="width:70px">
+      </div>
+      <button id="runImport">Import &amp; Analyze</button>
+    </div>
+    <div class="hint" id="runHint">Select an existing run, or import a Strategy Tester → Optimization Results → “Export to XML” file to begin.</div>
+  </div>
+
+  <div class="panel">
+    <div class="controls">
+      <div class="field">
+        <label>Min trades</label>
+        <input type="number" id="minTrades" value="100" min="0" step="10">
+      </div>
+      <div class="weights" id="weights"></div>
+      <label class="check"><input type="checkbox" id="profitable" checked> require profitable</label>
+      <button id="rescore">Re-score</button>
+    </div>
+    <div class="hint">Weights are relative — they're normalized automatically. Profitability gate drops losing / break-even passes before scoring.</div>
+  </div>
+
+  <div class="panel">
+    <h2 class="panel-title">Prop-firm suitability</h2>
+    <div class="controls">
+      <label class="check"><input type="checkbox" id="propOn"> evaluate for prop firm</label>
+      <div class="field"><label>Max total DD %</label>
+        <input type="number" id="propDD" value="10" min="0" step="0.5"></div>
+      <div class="field"><label>Min trades</label>
+        <input type="number" id="propMinTrades" value="0" min="0" step="10"></div>
+      <label class="check"><input type="checkbox" id="propOnly"> show prop-safe only</label>
+    </div>
+    <div class="hint">Checks max total drawdown (the usual 8–10% prop limit) and min trades. Daily DD, trading days, and consistency rules aren't in the optimization data — verify those with a full backtest before funding an account.</div>
+  </div>
+
+  <div class="panel">
+    <div class="stats">
+      <div class="stat"><b id="stKept">–</b><span>robust passes</span></div>
+      <div class="stat"><b id="stFiltered">–</b><span>filtered out</span></div>
+      <div class="stat"><b id="stTotal">–</b><span>total passes</span></div>
+      <div class="stat" id="stPropWrap" style="display:none"><b id="stProp" class="good">–</b><span>prop-safe</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="tablewrap">
+      <table>
+        <thead><tr>
+          <th>Rank</th><th>Pass</th><th>Robustness</th><th>PF</th><th>Profit</th>
+          <th>DD %</th><th>Back</th><th>Fwd</th><th>Fwd/Back</th><th>Trades</th><th>Prop</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 class="panel-title">Refine → narrowed set file</h2>
+    <div class="controls">
+      <div class="field">
+        <label>Base .set file</label>
+        <input type="file" id="baseFile" accept=".set">
+      </div>
+      <div class="field">
+        <label>Top fraction</label>
+        <input type="number" id="topFrac" value="0.10" min="0.01" max="1" step="0.05">
+      </div>
+      <div class="field">
+        <label>Min top</label>
+        <input type="number" id="minTop" value="25" min="1" step="5">
+      </div>
+      <button id="refineBtn">Refine &amp; Download</button>
+    </div>
+    <div class="hint">Upload the base template you optimized. The refiner pins inputs that don't matter and narrows the ones that do — around this run's top passes — then hands back a drop-in <b>.set</b> for a far smaller next optimization.</div>
+    <div class="refine-out" id="refineOut"></div>
+  </div>
+
+  <div class="panel">
+    <h2 class="panel-title">Portfolio — live account tracking</h2>
+    <div id="accounts" class="accounts"></div>
+    <div id="equityChart" class="chart-wrap"></div>
+    <details style="margin-top:16px">
+      <summary class="muted">Connect a Myfxbook account</summary>
+      <div class="syncrow">
+        <div class="field"><label>Myfxbook email</label>
+          <input type="text" id="mfxEmail" placeholder="email" autocomplete="off"></div>
+        <div class="field"><label>Password</label>
+          <input type="password" id="mfxPass" placeholder="password" autocomplete="off"></div>
+        <button id="mfxSync">Sync</button>
+      </div>
+      <div class="hint">Sent straight to myfxbook.com over HTTPS, used once to pull your accounts — never stored by this app.</div>
+    </details>
+    <div class="hint" style="margin-top:12px">MT5 direct: run <b>scripts/mt5_agent.py</b> on your PC with the account's investor (read-only) password to push live snapshots.</div>
+  </div>
+</main>
+
+<script>
+const WEIGHTS = [
+  {key:"profit_factor", label:"Profit Factor", val:0.30},
+  {key:"drawdown",      label:"Drawdown",      val:0.25},
+  {key:"profit",        label:"Profit",        val:0.25},
+  {key:"consistency",   label:"Consistency",   val:0.20},
+];
+let runId = null;
+let runList = [];
+
+function buildWeightSliders() {
+  const box = document.getElementById("weights");
+  box.innerHTML = "";
+  for (const w of WEIGHTS) {
+    const d = document.createElement("div"); d.className = "wt";
+    d.innerHTML = `<label>${w.label}<span id="v_${w.key}">${w.val.toFixed(2)}</span></label>
+      <input type="range" min="0" max="1" step="0.05" value="${w.val}" id="w_${w.key}">`;
+    box.appendChild(d);
+    d.querySelector("input").addEventListener("input", e => {
+      document.getElementById("v_"+w.key).textContent = (+e.target.value).toFixed(2);
+    });
+  }
+}
+
+function readWeights() {
+  const out = {};
+  for (const w of WEIGHTS) out[w.key] = +document.getElementById("w_"+w.key).value;
+  return out;
+}
+
+function fmt(n, d=2) { return n==null ? "–" : (+n).toFixed(d); }
+function fmtInt(n) { return n==null ? "–" : (+n).toLocaleString(); }
+function fmtBig(n) {
+  if (n==null) return "–"; n = +n;
+  return n >= 1e9 ? n.toExponential(2) : Math.round(n).toLocaleString();
+}
+
+function fbClass(fb) { return fb>=0.8 ? "good" : fb>=0.5 ? "warn" : "bad"; }
+
+async function loadRuns() {
+  runList = await (await fetch("/api/runs")).json();
+  const sel = document.getElementById("runSelect");
+  const current = sel.value;
+  sel.innerHTML = `<option value="">— select a run —</option>` + runList.map(r =>
+    `<option value="${r.id}">${r.ea || "?"} · ${r.symbol || "?"} ${r.timeframe || ""} · ${r.passes.toLocaleString()} passes</option>`
+  ).join("");
+  if (current) sel.value = current;   // preserve selection across refreshes
+}
+
+async function selectRun(id) {
+  runId = id || null;
+  const r = runList.find(x => x.id === id);
+  document.getElementById("runinfo").innerHTML = r
+    ? `<b>${r.ea}</b> · ${r.symbol || "?"} ${r.timeframe || ""} · <b>${r.passes.toLocaleString()}</b> passes`
+    : "no run loaded";
+  document.getElementById("stTotal").textContent = r ? r.passes.toLocaleString() : "–";
+  await rescore();
+}
+
+async function importRun() {
+  const f = document.getElementById("runFile").files[0];
+  const ea = document.getElementById("runEa").value.trim();
+  const hint = document.getElementById("runHint");
+  if (!f || !ea) { hint.textContent = "Choose an XML file and enter an EA name first."; return; }
+  const btn = document.getElementById("runImport");
+  btn.disabled = true; btn.textContent = "Importing…"; hint.textContent = "Importing…";
+  try {
+    const fd = new FormData();
+    fd.append("file", f);
+    fd.append("ea_name", ea);
+    const sym = document.getElementById("runSymbol").value.trim(); if (sym) fd.append("symbol", sym);
+    const tf = document.getElementById("runTf").value.trim(); if (tf) fd.append("timeframe", tf);
+    const { job_id } = await (await fetch("/api/runs/import", { method: "POST", body: fd })).json();
+    // poll the background job (large files parse server-side, off the request)
+    let status = "queued";
+    for (let i = 0; i < 400 && (status === "queued" || status === "processing"); i++) {
+      await new Promise(r => setTimeout(r, 1500));
+      const j = await (await fetch(`/api/runs/import/${job_id}`)).json();
+      status = j.status;
+      if (status === "done") {
+        await loadRuns();
+        document.getElementById("runSelect").value = String(j.run_id);
+        await selectRun(j.run_id);
+        hint.textContent = `Imported ${(j.passes || 0).toLocaleString()} passes.`;
+      } else if (status === "error") {
+        hint.textContent = "Import failed: " + (j.error || "unknown error");
+      } else {
+        hint.textContent = `Importing… (${status})`;
+      }
+    }
+  } catch (e) {
+    hint.textContent = "Import failed: " + e;
+  } finally {
+    btn.disabled = false; btn.textContent = "Import & Analyze";
+  }
+}
+
+async function rescore() {
+  if (runId == null) {
+    lastTop = [];
+    document.getElementById("runinfo").textContent = "no run loaded";
+    document.getElementById("rows").innerHTML =
+      `<tr><td colspan="11" class="muted">Select or import an optimization run above to see ranked passes.</td></tr>`;
+    document.getElementById("stKept").textContent = "–";
+    document.getElementById("stFiltered").textContent = "–";
+    document.getElementById("stPropWrap").style.display = "none";
+    await loadAccounts();
+    return;
+  }
+  const btn = document.getElementById("rescore");
+  btn.disabled = true; btn.textContent = "Scoring…";
+  try {
+    const body = {
+      min_trades: +document.getElementById("minTrades").value,
+      top: 20,   // show the top 20 by the current slider-weighted ranking
+      require_profitable: document.getElementById("profitable").checked,
+      weights: readWeights(),
+    };
+    if (document.getElementById("propOn").checked) {
+      body.propfirm = {
+        max_total_dd_pct: +document.getElementById("propDD").value,
+        min_trades: +document.getElementById("propMinTrades").value,
+        only: document.getElementById("propOnly").checked,
+      };
+    }
+    const res = await (await fetch(`/api/runs/${runId}/score`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(body),
+    })).json();
+    lastTop = res.top || [];
+    document.getElementById("stKept").textContent = res.kept.toLocaleString();
+    document.getElementById("stFiltered").textContent = res.filtered_out.toLocaleString();
+    const propWrap = document.getElementById("stPropWrap");
+    if (res.prop_safe != null) {
+      propWrap.style.display = "";
+      document.getElementById("stProp").textContent = res.prop_safe.toLocaleString();
+    } else {
+      propWrap.style.display = "none";
+    }
+
+    const maxScore = res.top.length ? res.top[0].robustness_score : 100;
+    const rows = res.top.map((p, i) => {
+      const fb = p.back_result ? p.forward_result / p.back_result : 0;
+      const w = Math.max(4, (p.robustness_score / maxScore) * 90);
+      const prop = p.prop_safe === undefined ? `<span class="muted">–</span>`
+        : p.prop_safe ? `<span class="good" title="prop-safe">✓</span>`
+        : `<span class="bad" title="${(p.prop_reasons||[]).join('; ')}">✕</span>`;
+      return `<tr>
+        <td class="pass-no">${i+1}</td>
+        <td>${p.pass_no}</td>
+        <td><div class="score-cell"><span>${fmt(p.robustness_score,1)}</span>
+            <div class="bar" style="width:${w}px"></div></div></td>
+        <td>${fmt(p.profit_factor)}</td>
+        <td>${fmt(p.profit)}</td>
+        <td>${fmt(p.equity_dd_pct)}</td>
+        <td class="muted">${fmt(p.back_result)}</td>
+        <td>${fmt(p.forward_result)}</td>
+        <td class="${fbClass(fb)}">${fmt(fb)}</td>
+        <td>${fmtInt(p.trades)}</td>
+        <td>${prop}</td>
+      </tr>`;
+    }).join("");
+    document.getElementById("rows").innerHTML = rows ||
+      `<tr><td colspan="11" class="muted">No passes survived the filters.</td></tr>`;
+    await loadAccounts();   // refresh link selectors with the new top passes
+  } finally {
+    btn.disabled = false; btn.textContent = "Re-score";
+  }
+}
+
+async function refine() {
+  if (runId == null) return;
+  const fileInput = document.getElementById("baseFile");
+  const out = document.getElementById("refineOut");
+  if (!fileInput.files.length) {
+    out.innerHTML = `<span class="muted">Choose a base .set file first.</span>`; return;
+  }
+  const btn = document.getElementById("refineBtn");
+  btn.disabled = true; btn.textContent = "Refining…";
+  try {
+    const fd = new FormData(); fd.append("base", fileInput.files[0]);
+    const tf = +document.getElementById("topFrac").value;
+    const mt = +document.getElementById("minTop").value;
+    const res = await (await fetch(
+      `/api/runs/${runId}/refine?top_frac=${tf}&min_top=${mt}`,
+      { method:"POST", body: fd })).json();
+
+    const ss = res.search_space;
+    const narrowed = res.plans.filter(p => p.action === "narrow")
+      .sort((a,b) => b.sensitivity - a.sensitivity);
+
+    let html = `<div class="reduction">Search space
+      <b>${fmtBig(ss.before)}</b> → <b>${fmtBig(ss.after)}</b> combinations
+      <span class="good">(${fmtBig(ss.reduction_x)}× smaller)</span></div>
+      <div><span class="pill">best pass #${res.best_pass.pass_no}</span>
+        <span class="pill">${res.summary.narrow} narrowed</span>
+        <span class="pill">${res.summary.pin} pinned</span>
+        <span class="pill">${res.summary.fixed} fixed</span></div>`;
+
+    if (narrowed.length) {
+      html += `<table><thead><tr><th>Kept input</th><th>Sensitivity</th>
+        <th>Narrowed range</th></tr></thead><tbody>` +
+        narrowed.map(p => `<tr><td>${p.name}</td>
+          <td>${(p.sensitivity*100).toFixed(0)}%</td>
+          <td>${(+p.new_start)} – ${(+p.new_stop)}</td></tr>`).join("") +
+        `</tbody></table>`;
+    }
+
+    const bytes = Uint8Array.from(atob(res.refined_setfile_b64), c => c.charCodeAt(0));
+    const url = URL.createObjectURL(new Blob([bytes], {type:"application/octet-stream"}));
+    const fname = (fileInput.files[0].name || "base.set").replace(/\.set$/i, "") + "_refined.set";
+    html += `<a class="dl" download="${fname}" href="${url}">⬇ Download ${fname}</a>`;
+    out.innerHTML = html;
+  } finally {
+    btn.disabled = false; btn.textContent = "Refine & Download";
+  }
+}
+
+// ---- Portfolio ------------------------------------------------------------
+let selectedAccount = null;
+let lastTop = [];   // most recent scored leaderboard, for the link selector
+
+function linkOptions(account) {
+  const ids = new Set(lastTop.map(p => p.id));
+  let opts = `<option value="">— link a set —</option>`;
+  // keep the currently-linked pass selectable even if it's outside the top list
+  if (account.linked && !ids.has(account.linked.pass_id)) {
+    opts += `<option value="${account.linked.pass_id}" selected>#${account.linked.pass_no} (linked)</option>`;
+  }
+  opts += lastTop.map(p => {
+    const sel = account.linked_pass_id === p.id ? "selected" : "";
+    const sc = p.robustness_score == null ? "–" : (+p.robustness_score).toFixed(0);
+    return `<option value="${p.id}" ${sel}>#${p.pass_no} · score ${sc} · PF ${fmt(p.profit_factor)}</option>`;
+  }).join("");
+  return opts;
+}
+
+async function loadAccounts() {
+  const el = document.getElementById("accounts");
+  const accts = await (await fetch("/api/accounts")).json();
+  if (!accts.length) {
+    el.innerHTML = `<div class="empty">No accounts connected yet. Sync a Myfxbook account below, or run the MT5 agent to push live snapshots.</div>`;
+    document.getElementById("equityChart").innerHTML = "";
+    return;
+  }
+  el.innerHTML = accts.map(a => {
+    const l = a.latest;
+    let meta = "no data yet";
+    if (l) {
+      const eq = l.equity, bal = l.balance;
+      // current/floating drawdown, computed from balance→equity (source-agnostic)
+      const curDD = (bal != null && eq != null && bal > 0)
+        ? Math.max(0, (bal - eq) / bal * 100) : null;
+      const eqTxt = eq == null ? "–" : (+eq).toLocaleString();
+      const curTxt = curDD == null ? "–" : curDD.toFixed(2) + "%";
+      const maxTxt = l.dd_pct == null ? "–" : (+l.dd_pct).toFixed(2) + "%";
+      const rfTxt = l.recovery_factor == null ? "" : ` · RF ${(+l.recovery_factor).toFixed(2)}`;
+      meta = `equity ${eqTxt} · cur DD ${curTxt} · max DD ${maxTxt}${rfTxt}`;
+    }
+    const liveMaxDD = l && l.dd_pct != null ? `${(+l.dd_pct).toFixed(2)}%` : "–";
+    const linked = a.linked
+      ? `<div class="linked-line">↔ pass #${a.linked.pass_no} · backtest PF ${fmt(a.linked.profit_factor)} / max DD ${fmt(a.linked.equity_dd_pct)}% → live max DD ${liveMaxDD}</div>`
+      : `<div class="linked-line none">not linked to a set</div>`;
+    return `<div class="acct" data-id="${a.id}">
+      <div><div><span class="kind">${a.kind}</span><span class="lbl">${a.label}</span></div>${linked}</div>
+      <div class="acct-right">
+        <div class="meta">${meta}</div>
+        <select class="linksel" data-id="${a.id}">${linkOptions(a)}</select>
+      </div></div>`;
+  }).join("");
+
+  el.querySelectorAll(".acct").forEach(node =>
+    node.addEventListener("click", () => selectAccount(+node.dataset.id)));
+  el.querySelectorAll(".linksel").forEach(sel => {
+    sel.addEventListener("click", e => e.stopPropagation());   // don't trigger row select
+    sel.addEventListener("change", e => {
+      e.stopPropagation();
+      const pid = e.target.value === "" ? null : +e.target.value;
+      linkPass(+sel.dataset.id, pid);
+    });
+  });
+  if (selectedAccount != null && accts.some(a => a.id === selectedAccount))
+    selectAccount(selectedAccount);
+}
+
+async function linkPass(accountId, passId) {
+  await fetch(`/api/accounts/${accountId}/link`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pass_id: passId }),
+  });
+  await loadAccounts();
+}
+
+async function selectAccount(id) {
+  selectedAccount = id;
+  document.querySelectorAll(".acct").forEach(n =>
+    n.classList.toggle("sel", +n.dataset.id === id));
+  const series = await (await fetch(`/api/accounts/${id}/equity`)).json();
+  document.getElementById("equityChart").innerHTML = renderEquitySvg(series);
+}
+
+function renderEquitySvg(series) {
+  const pts = series.filter(s => s.equity != null).map(s => +s.equity);
+  if (pts.length < 2)
+    return `<div class="empty">Not enough snapshots yet to chart (need 2+).</div>`;
+  const W = 900, H = 200, pad = 34;
+  const min = Math.min(...pts), max = Math.max(...pts), span = (max - min) || 1;
+  const x = i => pad + (i / (pts.length - 1)) * (W - 2 * pad);
+  const y = v => H - pad - ((v - min) / span) * (H - 2 * pad);
+  const line = pts.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const area = `M${x(0)},${H - pad} ${line.replace("M", "L")} L${x(pts.length - 1)},${H - pad} Z`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="none" style="max-height:220px">
+    <path d="${area}" fill="var(--accent)" opacity="0.12"/>
+    <path d="${line}" fill="none" stroke="var(--accent2)" stroke-width="2"/>
+    <text x="${pad}" y="16" fill="var(--muted)" font-size="12">equity ${min.toLocaleString()} – ${max.toLocaleString()}</text>
+    <text x="${W - pad}" y="${H - 8}" fill="var(--muted)" font-size="12" text-anchor="end">${pts.length} snapshots</text>
+  </svg>`;
+}
+
+async function syncMyfxbook() {
+  const email = document.getElementById("mfxEmail").value.trim();
+  const password = document.getElementById("mfxPass").value;
+  if (!email || !password) return;
+  const btn = document.getElementById("mfxSync");
+  btn.disabled = true; btn.textContent = "Syncing…";
+  try {
+    const r = await fetch("/api/portfolio/myfxbook/sync", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!r.ok) alert("Sync failed: " + (await r.text()));
+    document.getElementById("mfxPass").value = "";
+    await loadAccounts();
+  } finally {
+    btn.disabled = false; btn.textContent = "Sync";
+  }
+}
+
+buildWeightSliders();
+document.getElementById("rescore").addEventListener("click", rescore);
+document.getElementById("refineBtn").addEventListener("click", refine);
+document.getElementById("mfxSync").addEventListener("click", syncMyfxbook);
+document.getElementById("runImport").addEventListener("click", importRun);
+document.getElementById("runSelect").addEventListener("change", e =>
+  selectRun(e.target.value ? +e.target.value : null));
+// Land with no run loaded — prompt the user to select or import one.
+(async () => { await loadRuns(); await rescore(); })();   // rescore(null) shows the prompt + loads accounts
+</script>
+</body>
+</html>

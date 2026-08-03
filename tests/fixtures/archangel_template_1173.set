@@ -1,0 +1,98 @@
+; saved on 2025.11.08 20:22:36
+; this file contains input parameters for testing/optimizing Archangel_X-v3.3 expert advisor
+; to use it in the strategy tester, click Load in the context menu of the Inputs tab
+;
+; GENERAL TRADE SETTINGS
+inpAllowNewSequence=true||false||0||true||N
+inpStrategyDescription=
+inpTradeComment=
+inpMagicNumber=0||0||1||10||N
+inpUseRandomEntryDelay=false||false||0||true||N
+; EA LICENSING SETTINGS
+inpLicenseKey=
+; SEQUENCE SETTINGS
+inpUseAtrComment1=[Only values entered in negative will be treated as ATR multipl
+inpAtrPeriod=704||4||100||1100||Y
+inpPipStep=90||0||10||200||Y
+inpPipStepExponent=4.5||1||0.5||5||Y
+inpMaxPipStep=81||1||10||100||Y
+inpDelayTradeSequence=4||0||1||4||Y
+inpLiveDelaySequence=0||0||1||5||Y
+inpLiveDelayLotMultiplier=1.0||1.0||1||10||N
+inpCombineLiveDelayTrades=true||false||0||true||N
+inpTradeDirection=0||0||0||2||N
+inpMaxOrdersPerDirection=2||1||1||10||Y
+inpReverseSequenceDirection=false||false||0||true||N
+; MONEY MANAGEMENT SETTINGS
+inpTakeProfitPips=635||50.0||5.000000||1000.000000||Y
+inpStopLossPips=65.0||50.0||0.500000||400.000000||Y
+inpLockProfitMinTrades=2||0||1||10||Y
+inpLockProfit=19||1||3||50||Y
+inpCheckLockProfit=-1||0||0||-1||Y
+inpTrailingSlPips=1||1||2||20||Y
+inpCheckTrailingSl=-1||0||0||-1||Y
+inpAllowSamePairSameDirection=false||false||0||true||N
+; COMPOUND SETTINGS
+inpCompoundingComment=!!! Compound LotSize means that LotSize, MaxLots and Max Running Loss will be per threshold !!!
+inpUseCompounding=false||false||0||true||Y
+inpCompoundingAccountSize=730000||100000.0||10000.000000||1000000.000000||Y
+; LOTSIZE SETTINGS
+inpLotSize=0.01||0.01||0.1||2.000000||Y
+inpRiskPct=0.5||0.5||0.500000||2.000000||Y
+inpLotSizeExponent=1.8||1||0.2||2||Y
+inpMaxLotSize=2||1.0||1||4.000000||Y
+; WEEKEND CLOSURE SETTINGS
+inpCloseForWeekend=false||false||0||true||N
+inpDayToClose=5||0||0||6||N
+inpTimeToClose=21:00
+inpDayToRestart=1||0||0||6||N
+inpTimeToRestart=1:00
+; TRADING SESSION SETTINGS
+inpTradingSession=4||0||0||6||Y
+tradingSessionMsg=Set Trading Session Time = 0. To Set the day as off i.e. No Trading
+inpMondayTradingSession=02:00-14:00
+inpTuesdayTradingSession=02:00-14:00
+inpWednesdayTradingSession=02:00-14:00
+inpThursayTradingSession=02:00-14:00
+inpFridayTradingSession=02:00-14:00
+inpActionAtSessionClose=2||0||0||2||Y
+; EQUITY PROTECTOR SETTINGS
+inpMaxRunningLoss=7600||4000.0||400.000000||10000||Y
+inpRestartEA=0||0||0||1||N
+inpRestartNextDayAt=01:00
+inpRestartAfterHours=5||3.0||2||24||Y
+inpDailyProfitTarget=3000||1000.0||500.000000||10000.000000||Y
+inpUltimateTragetBalance=0.0||0.0||0.000000||0.000000||N
+inpGlobalEquityStopType=1||0||0||2||N
+inpGlobalStop=1500||1000.0||500.000000||5000.000000||Y
+inpMinSecondsBtwTrades=0||0||1||10||N
+; INDICATORS SETTINGS
+; RSI SETTINGS
+inpUseRsi=false||false||0||true||Y
+inpRsiTimeframe=30||1||0||16385||Y
+inpRsiPeriod=30||5||5||100||Y
+inpOverBoughtLevel=62||55||1||90||Y
+; EMA SETTINGS
+inpUseEMA=true||false||0||true||Y
+inpEmaTimeframe=16387||1||0||16392||Y
+inpEmaPeriod=3||1||0||4||Y
+inpEmaTrendRule=0||0||0||1||Y
+inpEmaDoubleCheck=false||false||0||true||Y
+; ADX SETTINGS
+inpUseAdx=true||false||0||true||Y
+inpAdxTimeframe=20||0||0||16392||Y
+inpAdxPeriod=5||5||5||100||Y
+inpAdxThreshold=25||25||5||60||Y
+inpAdxTrendRule=0||0||0||1||Y
+inpAdxDoubleCheck=true||false||0||true||Y
+; BOLLINGER BANDS SETTINGS
+inpUseBollingerBands=false||false||0||true||Y
+inpBBMode=1||0||0||1||Y
+inpBBTimeframe=16386||0||0||16392||Y
+inpBBPeriod=64||50||1||120||Y
+inpBBDeviations=4.0||0||0.1||5||Y
+; NEWS FILTER SETTINGS
+inpUseHighImpactNewsFilter=true||false||0||true||N
+inpNewsTradeAction=2||0||0||2||Y
+inpCloseTradesTimeBeforeNews=60||60||10||300||Y
+inpPauseTradesTimeAfterNews=60||60||10||300||Y

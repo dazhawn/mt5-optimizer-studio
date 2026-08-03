@@ -1,0 +1,93 @@
+﻿; Archangel_X-v3.3 - MT5 Optimization Export
+; Pass #5125 | PF:6.55 | DD:9.35%
+; Mode: LIVE
+;
+; GENERAL
+inpAllowNewSequence=true||false||0||true||N
+inpStrategyDescription=Pass5125_PF6.55
+inpTradeComment=P5125
+inpMagicNumber=0||0||1||10||N
+inpUseRandomEntryDelay=true||false||0||true||N
+inpLicenseKey=
+; SEQUENCE
+inpAtrPeriod=4||0||0||0||N
+inpPipStep=0||0||0||0||N
+inpPipStepExponent=1||0||0||0||N
+inpMaxPipStep=91||0||0||0||N
+inpDelayTradeSequence=0||0||0||0||N
+inpLiveDelaySequence=3||0||1||5||N
+inpLiveDelayLotMultiplier=1.0||1.0||1||10||N
+inpCombineLiveDelayTrades=true||false||0||true||N
+inpTradeDirection=0||0||0||2||N
+inpMaxOrdersPerDirection=8||0||0||0||N
+inpReverseSequenceDirection=false||false||0||true||N
+; MONEY MANAGEMENT
+inpTakeProfitPips=135||0||0||0||N
+inpStopLossPips=50||0||0||0||N
+inpLockProfitMinTrades=7||0||0||0||N
+inpLockProfit=4||0||0||0||N
+inpCheckLockProfit=-1||0||0||-1||N
+inpTrailingSlPips=13||0||0||0||N
+inpCheckTrailingSl=1||0||0||-1||N
+inpAllowSamePairSameDirection=false||false||0||true||N
+; COMPOUND
+inpUseCompounding=false||false||0||true||N
+inpCompoundingAccountSize=150000||100000||10000||1000000||N
+; LOTSIZE
+inpLotSize=0.01||0||0||0||N
+inpRiskPct=0.5||0||0||0||N
+inpLotSizeExponent=1.6||0||0||0||N
+inpMaxLotSize=1||0||0||0||N
+; WEEKEND
+inpCloseForWeekend=true||false||0||true||N
+inpDayToClose=5||0||0||6||N
+inpTimeToClose=20:00
+inpDayToRestart=1||0||0||6||N
+inpTimeToRestart=01:00
+; SESSION
+inpTradingSession=2||0||0||6||N
+inpMondayTradingSession=02:00-14:00
+inpTuesdayTradingSession=02:00-14:00
+inpWednesdayTradingSession=02:00-14:00
+inpThursayTradingSession=02:00-14:00
+inpFridayTradingSession=02:00-14:00
+inpActionAtSessionClose=1||0||0||2||N
+; EQUITY PROTECTOR
+inpMaxRunningLoss=7200||0||0||0||N
+inpRestartEA=0||0||0||1||N
+inpRestartNextDayAt=01:00
+inpRestartAfterHours=13||3||2||24||N
+inpDailyProfitTarget=1000||0||500||5000||N
+inpUltimateTragetBalance=0.0||0||0||0||N
+inpGlobalEquityStopType=1||0||0||2||N
+inpGlobalStop=1000||0||0||0||N
+inpMinSecondsBtwTrades=30||0||10||120||N
+; RSI
+inpUseRsi=false||false||0||true||N
+inpRsiTimeframe=1||1||0||16385||N
+inpRsiPeriod=5||4||2||20||N
+inpOverBoughtLevel=55||55||5||80||N
+; EMA
+inpUseEMA=false||false||0||true||N
+inpEmaTimeframe=1||1||0||16392||N
+inpEmaPeriod=1||0||1||4||N
+inpEmaTrendRule=0||0||0||1||N
+inpEmaDoubleCheck=false||false||0||true||N
+; ADX
+inpUseAdx=false||false||0||true||N
+inpAdxTimeframe=0||0||0||16392||N
+inpAdxPeriod=5||5||5||50||N
+inpAdxThreshold=25||20||5||50||N
+inpAdxTrendRule=0||0||0||1||N
+inpAdxDoubleCheck=false||false||0||true||N
+; BOLLINGER
+inpUseBollingerBands=false||false||0||true||N
+inpBBMode=0||0||0||1||N
+inpBBTimeframe=0||0||0||16392||N
+inpBBPeriod=50||10||5||50||N
+inpBBDeviations=0||1.0||0.5||3.0||N
+; NEWS
+inpUseHighImpactNewsFilter=true||false||0||true||N
+inpNewsTradeAction=0||0||0||2||N
+inpCloseTradesTimeBeforeNews=60||1||1||4||N
+inpPauseTradesTimeAfterNews=60||1||1||8||N
