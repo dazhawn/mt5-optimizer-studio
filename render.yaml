@@ -4,7 +4,7 @@ services:
   - type: web
     name: mt5-optimizer-studio
     runtime: python
-    plan: starter                     # "free" works too (spins down when idle)
+    plan: free                        # spins down when idle (~30-50s cold start); upgrade to "starter" for always-on
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
@@ -26,4 +26,4 @@ services:
 
 databases:
   - name: mt5studio-db
-    plan: basic-256mb                 # "free" tier expires after 30 days
+    plan: free                        # free Postgres expires 30 days after creation; upgrade to "basic-256mb" to persist
